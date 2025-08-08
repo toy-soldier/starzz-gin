@@ -1,0 +1,563 @@
+{
+	"info": {
+		"_postman_id": "0268f845-3370-4527-a1d1-8bf6d597028a",
+		"name": "starzz",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "46429602"
+	},
+	"item": [
+		{
+			"name": "List Constellations",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:{{port}}/constellations",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "{{port}}",
+					"path": [
+						"constellations"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register Constellation",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"constellation_id\": null,\r\n    \"constellation_name\": \"C3PO\",\r\n    \"galaxy_id\": 54,\r\n    \"added_by\": 100,\r\n    \"verified_by\": 2\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:{{port}}/constellations",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "{{port}}",
+					"path": [
+						"constellations"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Retrieve Constellation",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:{{port}}/constellations/101",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "{{port}}",
+					"path": [
+						"constellations",
+						"101"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Constellation",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"constellation_id\": null,\r\n    \"constellation_name\": \"C3POlice\",\r\n    \"galaxy_id\": 54,\r\n    \"added_by\": 100,\r\n    \"verified_by\": 2\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:{{port}}/constellations/101",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "{{port}}",
+					"path": [
+						"constellations",
+						"101"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Constellation",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:{{port}}/constellations/101",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "{{port}}",
+					"path": [
+						"constellations",
+						"101"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List Galaxies",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:{{port}}/galaxies",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "{{port}}",
+					"path": [
+						"galaxies"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register Galaxy",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"galaxy_id\": null,\r\n    \"galaxy_name\": \"GAL-9ad0t\",\r\n    \"galaxy_type\": \"Cluster\",\r\n\t\"distance_mly\": 4683,\r\n\t\"redshift\": 4,\r\n\t\"mass_solar\": 5429,\r\n\t\"diameter_ly\": 6445,\r\n    \"added_by\": 100,\r\n    \"verified_by\": 2\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:{{port}}/galaxies",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "{{port}}",
+					"path": [
+						"galaxies"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Retrieve Galaxy",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:{{port}}/galaxies/101",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "{{port}}",
+					"path": [
+						"galaxies",
+						"101"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Galaxy",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"galaxy_id\": null,\r\n    \"galaxy_name\": \"GAL-9ad0t\",\r\n    \"galaxy_type\": \"Spiral\",\r\n\t\"distance_mly\": 4683,\r\n\t\"redshift\": 4,\r\n\t\"mass_solar\": 5429,\r\n\t\"diameter_ly\": 6445,\r\n    \"added_by\": 100,\r\n    \"verified_by\": 2\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:{{port}}/galaxies/101",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "{{port}}",
+					"path": [
+						"galaxies",
+						"101"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Galaxy",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:{{port}}/galaxies/101",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "{{port}}",
+					"path": [
+						"galaxies",
+						"101"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List Stars",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:{{port}}/stars",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "{{port}}",
+					"path": [
+						"stars"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register Star",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"star_id\": null,\r\n\t\"star_name\": \"S-954eW\",\r\n\t\"star_type\": \"Pulsar\",\r\n\t\"constellation_id\": 1,\r\n\t\"right_ascension\": 45,\r\n\t\"declination\": -67,\r\n\t\"apparent_magnitude\": 1000,\r\n\t\"spectral_type\": \"D\",\r\n\t\"added_by\": 16,\r\n\t\"verified_by\": 352\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:{{port}}/stars",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "{{port}}",
+					"path": [
+						"stars"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Retrieve Star",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:{{port}}/stars/101",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "{{port}}",
+					"path": [
+						"stars",
+						"101"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Star",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"star_id\": null,\r\n\t\"star_name\": \"S-954eW\",\r\n\t\"star_type\": \"Quasar\",\r\n\t\"constellation_id\": 1,\r\n\t\"right_ascension\": 45,\r\n\t\"declination\": -67,\r\n\t\"apparent_magnitude\": 1000,\r\n\t\"spectral_type\": \"D\",\r\n\t\"added_by\": 16,\r\n\t\"verified_by\": 352\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:{{port}}/stars/101",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "{{port}}",
+					"path": [
+						"stars",
+						"101"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Star",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:{{port}}/stars/101",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "{{port}}",
+					"path": [
+						"stars",
+						"101"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List Users",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:{{port}}/users",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "{{port}}",
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register User",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"user_id\": null,\r\n    \"username\": \"stark29128\",\r\n    \"email\": \"eliot.balducci@aol.com\",\r\n    \"password\": \"string\",\r\n    \"first_name\": \"Bruce\",\r\n    \"last_name\": \"Stark\",\r\n    \"date_of_birth\": \"1993-08-24\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:{{port}}/users",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "{{port}}",
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Retrieve User",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:{{port}}/users/101",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "{{port}}",
+					"path": [
+						"users",
+						"101"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update User",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"user_id\": null,\r\n    \"username\": \"stark29128\",\r\n    \"email\": \"eliot.balducci@aol.com\",\r\n    \"password\": \"string\",\r\n    \"first_name\": \"Steve\",\r\n    \"last_name\": \"Stark\",\r\n    \"date_of_birth\": \"1993-08-24\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:{{port}}/users/101",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "{{port}}",
+					"path": [
+						"users",
+						"101"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete User",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:{{port}}/users/101",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "{{port}}",
+					"path": [
+						"users",
+						"101"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "port",
+			"value": "8080",
+			"type": "default"
+		}
+	]
+}
