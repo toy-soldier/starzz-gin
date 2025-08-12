@@ -3,27 +3,58 @@ package controllers
 import (
 	"fmt"
 	"net/http"
+	"starzz-gin/database"
 )
 
-func ListUsers() (int, map[string]string) {
-	return http.StatusOK, map[string]string{"message": "Successfully listed users."}
+func getUserError(err error) (int, map[string]any) {
+	errorCode := http.StatusInternalServerError
+	errorMessage := err.Error()
+	if errorMessage == "User not found" {
+		errorCode = http.StatusNotFound
+	}
+	return errorCode, map[string]any{"message": errorMessage}
 }
 
-func RegisterUser(newData any) (int, map[string]any) {
+func ListUsers() (int, any) {
+	listing, err := database.ListUsers()
+	if err != nil {
+		return getUserError(err)
+	}
+	return http.StatusOK, listing
+}
+
+func RegisterUser(newData database.User) (int, map[string]any) {
+	newRecordId, err := database.RegisterUser(newData)
+	if err != nil {
+		return getUserError(err)
+	}
+	newData.UserID = int(newRecordId)
+	newData.Password = "*****"
 	return http.StatusCreated, map[string]any{"message": "Successfully added user.", "data": newData}
 }
 
-func GetUserByID(id int) (int, map[string]any) {
-	message := fmt.Sprintf("Successfully retrieved user %d.", id)
-	return http.StatusOK, map[string]any{"message": message}
+func GetUserByID(id int) (int, any) {
+	record, err := database.GetUserByID(id)
+	if err != nil {
+		return getUserError(err)
+	}
+	return http.StatusOK, record
 }
 
-func UpdateUserByID(id int, newData any) (int, map[string]any) {
+func UpdateUserByID(id int, newData database.User) (int, map[string]any) {
+	err := database.UpdateUserByID(id, newData)
+	if err != nil {
+		return getUserError(err)
+	}
 	message := fmt.Sprintf("Successfully updated user %d.", id)
+	newData.Password = "*****"
 	return http.StatusAccepted, map[string]any{"message": message, "data": newData}
 }
 
 func DeleteUserByID(id int) (int, map[string]any) {
-	message := fmt.Sprintf("Successfully deleted user %d.", id)
-	return http.StatusNoContent, map[string]any{"message": message}
+	err := database.DeleteUserByID(id)
+	if err != nil {
+		return getUserError(err)
+	}
+	return http.StatusNoContent, nil
 }

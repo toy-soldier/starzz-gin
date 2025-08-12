@@ -3,23 +3,12 @@ package routers
 import (
 	"net/http"
 	"starzz-gin/controllers"
+	"starzz-gin/database"
 
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
-
-type galaxyData struct {
-	GalaxyID    int    `json:"galaxy_id"`
-	GalaxyName  string `json:"galaxy_name"`
-	GalaxyType  string `json:"galaxy_type"`
-	DistanceMly int    `json:"distance_mly"`
-	Redshift    int    `json:"redshift"`
-	MassSolar   int    `json:"mass_solar"`
-	DiameterLy  int    `json:"diameter_ly"`
-	AddedBy     int    `json:"added_by"`
-	VerifiedBy  int    `json:"verified_by"`
-}
 
 func HandleListGalaxies(c *gin.Context) {
 	statusCode, message := controllers.ListGalaxies()
@@ -27,7 +16,7 @@ func HandleListGalaxies(c *gin.Context) {
 }
 
 func HandleRegisterGalaxy(c *gin.Context) {
-	var newData galaxyData
+	var newData database.Galaxy
 
 	if err := c.BindJSON(&newData); err != nil {
 		// if the conversion fails, this will automatically return HTTP 400
@@ -35,11 +24,11 @@ func HandleRegisterGalaxy(c *gin.Context) {
 		return
 	}
 
-	statusCode, message := controllers.RegisterGalaxy(&newData)
+	statusCode, message := controllers.RegisterGalaxy(newData)
 	c.JSON(statusCode, message)
 }
 
-func parseGalaxyID(receivedID string) (int, map[string]any) {
+func parseGalaxyID(receivedID string) (int, any) {
 	id, err := strconv.Atoi(receivedID)
 	if err != nil {
 		return http.StatusBadRequest, map[string]any{"message": "No valid galaxy id specified."}
@@ -56,7 +45,7 @@ func HandleGetGalaxyByID(c *gin.Context) {
 }
 
 func HandleUpdateGalaxyByID(c *gin.Context) {
-	var newData galaxyData
+	var newData database.Galaxy
 
 	if err := c.BindJSON(&newData); err != nil {
 		// if the conversion fails, this will automatically return HTTP 400
@@ -66,6 +55,7 @@ func HandleUpdateGalaxyByID(c *gin.Context) {
 
 	statusCode, message := parseGalaxyID(c.Param("id"))
 	if message == nil {
+		newData.GalaxyID = statusCode
 		statusCode, message = controllers.UpdateGalaxyByID(statusCode, newData)
 	}
 	c.JSON(statusCode, message)

@@ -3,21 +3,12 @@ package routers
 import (
 	"net/http"
 	"starzz-gin/controllers"
+	"starzz-gin/database"
 
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
-
-type userData struct {
-	UserID      int    `json:"user_id"`
-	Username    string `json:"username"`
-	Email       string `json:"email"`
-	Password    string `json:"password"`
-	FirstName   string `json:"first_name"`
-	LastName    string `json:"last_name"`
-	DateOfBirth string `json:"date_of_birth"`
-}
 
 func HandleListUsers(c *gin.Context) {
 	statusCode, message := controllers.ListUsers()
@@ -25,7 +16,7 @@ func HandleListUsers(c *gin.Context) {
 }
 
 func HandleRegisterUser(c *gin.Context) {
-	var newData userData
+	var newData database.User
 
 	if err := c.BindJSON(&newData); err != nil {
 		// if the conversion fails, this will automatically return HTTP 400
@@ -33,11 +24,11 @@ func HandleRegisterUser(c *gin.Context) {
 		return
 	}
 
-	statusCode, message := controllers.RegisterUser(&newData)
+	statusCode, message := controllers.RegisterUser(newData)
 	c.JSON(statusCode, message)
 }
 
-func parseUserID(receivedID string) (int, map[string]any) {
+func parseUserID(receivedID string) (int, any) {
 	id, err := strconv.Atoi(receivedID)
 	if err != nil {
 		return http.StatusBadRequest, map[string]any{"message": "No valid user id specified."}
@@ -54,7 +45,7 @@ func HandleGetUserByID(c *gin.Context) {
 }
 
 func HandleUpdateUserByID(c *gin.Context) {
-	var newData userData
+	var newData database.User
 
 	if err := c.BindJSON(&newData); err != nil {
 		// if the conversion fails, this will automatically return HTTP 400
@@ -64,6 +55,7 @@ func HandleUpdateUserByID(c *gin.Context) {
 
 	statusCode, message := parseUserID(c.Param("id"))
 	if message == nil {
+		newData.UserID = statusCode
 		statusCode, message = controllers.UpdateUserByID(statusCode, newData)
 	}
 	c.JSON(statusCode, message)

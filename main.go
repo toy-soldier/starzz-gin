@@ -1,12 +1,19 @@
 package main
 
 import (
+	"log"
+	"starzz-gin/database"
 	"starzz-gin/routers"
 
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
+	err := database.ConnectToDatabase()
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	router := gin.Default()
 
 	{

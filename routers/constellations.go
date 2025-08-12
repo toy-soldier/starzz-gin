@@ -3,19 +3,12 @@ package routers
 import (
 	"net/http"
 	"starzz-gin/controllers"
+	"starzz-gin/database"
 
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
-
-type constellationData struct {
-	ConstellationID   int    `json:"constellation_id"`
-	ConstellationName string `json:"constellation_name"`
-	GalaxyID          int    `json:"galaxy_id"`
-	AddedBy           int    `json:"added_by"`
-	VerifiedBy        int    `json:"verified_by"`
-}
 
 func HandleListConstellations(c *gin.Context) {
 	statusCode, message := controllers.ListConstellations()
@@ -23,7 +16,7 @@ func HandleListConstellations(c *gin.Context) {
 }
 
 func HandleRegisterConstellation(c *gin.Context) {
-	var newData constellationData
+	var newData database.Constellation
 
 	if err := c.BindJSON(&newData); err != nil {
 		// if the conversion fails, this will automatically return HTTP 400
@@ -31,11 +24,11 @@ func HandleRegisterConstellation(c *gin.Context) {
 		return
 	}
 
-	statusCode, message := controllers.RegisterConstellation(&newData)
+	statusCode, message := controllers.RegisterConstellation(newData)
 	c.JSON(statusCode, message)
 }
 
-func parseConstellationID(receivedID string) (int, map[string]any) {
+func parseConstellationID(receivedID string) (int, any) {
 	id, err := strconv.Atoi(receivedID)
 	if err != nil {
 		return http.StatusBadRequest, map[string]any{"message": "No valid constellation id specified."}
@@ -52,7 +45,7 @@ func HandleGetConstellationByID(c *gin.Context) {
 }
 
 func HandleUpdateConstellationByID(c *gin.Context) {
-	var newData constellationData
+	var newData database.Constellation
 
 	if err := c.BindJSON(&newData); err != nil {
 		// if the conversion fails, this will automatically return HTTP 400
@@ -62,6 +55,7 @@ func HandleUpdateConstellationByID(c *gin.Context) {
 
 	statusCode, message := parseConstellationID(c.Param("id"))
 	if message == nil {
+		newData.ConstellationID = statusCode
 		statusCode, message = controllers.UpdateConstellationByID(statusCode, newData)
 	}
 	c.JSON(statusCode, message)

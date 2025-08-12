@@ -3,24 +3,12 @@ package routers
 import (
 	"net/http"
 	"starzz-gin/controllers"
+	"starzz-gin/database"
 
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
-
-type starData struct {
-	StarID             int    `json:"star_id"`
-	StarName           string `json:"star_name"`
-	StarType           string `json:"star_type"`
-	ConstellationID    int    `json:"constellation_id"`
-	RightAscension     int    `json:"right_ascension"`
-	Declination        int    `json:"declination"`
-	AapparentMagnitude int    `json:"apparent_magnitude"`
-	SpectralType       string `json:"spectral_type"`
-	AddedBy            int    `json:"added_by"`
-	VerifiedBy         int    `json:"verified_by"`
-}
 
 func HandleListStars(c *gin.Context) {
 	statusCode, message := controllers.ListStars()
@@ -28,7 +16,7 @@ func HandleListStars(c *gin.Context) {
 }
 
 func HandleRegisterStar(c *gin.Context) {
-	var newData starData
+	var newData database.Star
 
 	if err := c.BindJSON(&newData); err != nil {
 		// if the conversion fails, this will automatically return HTTP 400
@@ -36,11 +24,11 @@ func HandleRegisterStar(c *gin.Context) {
 		return
 	}
 
-	statusCode, message := controllers.RegisterStar(&newData)
+	statusCode, message := controllers.RegisterStar(newData)
 	c.JSON(statusCode, message)
 }
 
-func parseStarID(receivedID string) (int, map[string]any) {
+func parseStarID(receivedID string) (int, any) {
 	id, err := strconv.Atoi(receivedID)
 	if err != nil {
 		return http.StatusBadRequest, map[string]any{"message": "No valid star id specified."}
@@ -57,7 +45,7 @@ func HandleGetStarByID(c *gin.Context) {
 }
 
 func HandleUpdateStarByID(c *gin.Context) {
-	var newData starData
+	var newData database.Star
 
 	if err := c.BindJSON(&newData); err != nil {
 		// if the conversion fails, this will automatically return HTTP 400
@@ -67,6 +55,7 @@ func HandleUpdateStarByID(c *gin.Context) {
 
 	statusCode, message := parseStarID(c.Param("id"))
 	if message == nil {
+		newData.StarID = statusCode
 		statusCode, message = controllers.UpdateStarByID(statusCode, newData)
 	}
 	c.JSON(statusCode, message)
