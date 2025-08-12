@@ -24,6 +24,12 @@ func ListUsers() (int, any) {
 }
 
 func RegisterUser(newData database.User) (int, map[string]any) {
+	hashedPassword, err := HashPassword(newData.Password)
+	newData.Password = hashedPassword
+	if err != nil {
+		return getUserError(err)
+	}
+
 	newRecordId, err := database.RegisterUser(newData)
 	if err != nil {
 		return getUserError(err)
@@ -42,7 +48,13 @@ func GetUserByID(id int) (int, any) {
 }
 
 func UpdateUserByID(id int, newData database.User) (int, map[string]any) {
-	err := database.UpdateUserByID(id, newData)
+	hashedPassword, err := HashPassword(newData.Password)
+	newData.Password = hashedPassword
+	if err != nil {
+		return getUserError(err)
+	}
+
+	err = database.UpdateUserByID(id, newData)
 	if err != nil {
 		return getUserError(err)
 	}

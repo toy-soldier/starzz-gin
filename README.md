@@ -337,7 +337,49 @@ of package `database`:
     }
     ...
 
-The other modules in the `database` and `cntrollers` packages are similarly written.
+The other modules in the `database` and `controllers` packages are similarly written.
+
+#### Chapter 3: Setting up password hashing
+
+Go libraries added:
+
+    bcrypt
+    
+For security, we need to save the hash of the users' passwords, not the actual passwords.  We
+use the `bcrypt` library for this.  We add a new module `hashing.go` to the `controllers` package:
+
+    ...
+    func HashPassword(password string) (string, error) {
+        bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
+        return string(bytes), err
+    }
+
+    func VerifyPassword(password, hash string) bool {
+        err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+        return err == nil
+    }
+
+This module is a helper module for password hashing and verification.
+
+In `users.go` of the `controllers` package, we modify the functions that register new users and
+update existing users.  We first hash the password in the data received (if the password exists),
+before forwarding the data.  For example:
+
+    ...
+    func RegisterUser(newData database.User) (int, map[string]any) {
+        hashedPassword, err := HashPassword(newData.Password)
+        newData.Password = hashedPassword
+        if err != nil {
+            return getUserError(err)
+        }
+    ...
+    func UpdateUserByID(id int, newData database.User) (int, map[string]any) {
+        hashedPassword, err := HashPassword(newData.Password)
+        newData.Password = hashedPassword
+        if err != nil {
+            return getUserError(err)
+        }
+    ...
 
 ### References
 
