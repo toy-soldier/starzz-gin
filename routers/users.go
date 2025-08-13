@@ -11,11 +11,19 @@ import (
 )
 
 func HandleListUsers(c *gin.Context) {
+	if !hasValidJWT(c) {
+		return
+	}
+
 	statusCode, message := controllers.ListUsers()
 	c.JSON(statusCode, message)
 }
 
 func HandleRegisterUser(c *gin.Context) {
+	if !hasValidJWT(c) {
+		return
+	}
+
 	var newData database.User
 
 	if err := c.BindJSON(&newData); err != nil {
@@ -37,6 +45,10 @@ func parseUserID(receivedID string) (int, any) {
 }
 
 func HandleGetUserByID(c *gin.Context) {
+	if !hasValidJWT(c) {
+		return
+	}
+
 	statusCode, message := parseUserID(c.Param("id"))
 	if message == nil {
 		statusCode, message = controllers.GetUserByID(statusCode)
@@ -45,6 +57,10 @@ func HandleGetUserByID(c *gin.Context) {
 }
 
 func HandleUpdateUserByID(c *gin.Context) {
+	if !hasValidJWT(c) {
+		return
+	}
+
 	var newData database.User
 
 	if err := c.BindJSON(&newData); err != nil {
@@ -62,9 +78,40 @@ func HandleUpdateUserByID(c *gin.Context) {
 }
 
 func HandleDeleteUserByID(c *gin.Context) {
+	if !hasValidJWT(c) {
+		return
+	}
+
 	statusCode, message := parseUserID(c.Param("id"))
 	if message == nil {
 		statusCode, message = controllers.DeleteUserByID(statusCode)
 	}
 	c.JSON(statusCode, message)
+}
+
+func HandleLogin(c *gin.Context) {
+	var loginData database.User
+
+	if err := c.BindJSON(&loginData); err != nil {
+		// if the conversion fails, this will automatically return HTTP 400
+		// so there is no need to explicitly handle it
+		return
+	}
+
+	statusCode, message := controllers.Login(loginData)
+	c.JSON(statusCode, message)
+}
+
+func hasValidJWT(c *gin.Context) bool {
+	auth := c.GetHeader("Authorization")
+	if auth == "" {
+		c.JSON(http.StatusUnauthorized, map[string]any{"message": "Missing authorization header"})
+		return false
+	}
+	err := controllers.VerifyToken(auth[len("Bearer "):])
+	if err != nil {
+		c.JSON(http.StatusForbidden, map[string]any{"message": err.Error()})
+		return false
+	}
+	return true
 }

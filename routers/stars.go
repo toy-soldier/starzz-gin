@@ -16,6 +16,10 @@ func HandleListStars(c *gin.Context) {
 }
 
 func HandleRegisterStar(c *gin.Context) {
+	if !hasValidJWT(c) {
+		return
+	}
+
 	var newData database.Star
 
 	if err := c.BindJSON(&newData); err != nil {
@@ -45,6 +49,10 @@ func HandleGetStarByID(c *gin.Context) {
 }
 
 func HandleUpdateStarByID(c *gin.Context) {
+	if !hasValidJWT(c) {
+		return
+	}
+
 	var newData database.Star
 
 	if err := c.BindJSON(&newData); err != nil {
@@ -62,6 +70,10 @@ func HandleUpdateStarByID(c *gin.Context) {
 }
 
 func HandleDeleteStarByID(c *gin.Context) {
+	if !hasValidJWT(c) {
+		return
+	}
+
 	statusCode, message := parseStarID(c.Param("id"))
 	if message == nil {
 		statusCode, message = controllers.DeleteStarByID(statusCode)

@@ -94,6 +94,25 @@ func GetUserByID(id int) (*User, error) {
 	return &record, nil
 }
 
+func GetUserByUsername(username string) (*User, error) {
+	rows, err := DB.Query("SELECT username, password FROM users WHERE username=?", username)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	record := User{}
+	if rows.Next() {
+		err = rows.Scan(&record.Username, &record.Password)
+		if err != nil {
+			return nil, err
+		}
+		return &record, nil
+	}
+
+	return nil, errors.New("Invalid credentials")
+}
+
 func UpdateUserByID(id int, newData User) error {
 	err := checkThatUserRecordExists(id)
 	if err != nil {

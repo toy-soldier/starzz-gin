@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"starzz-gin/database"
@@ -9,6 +10,9 @@ import (
 func getUserError(err error) (int, map[string]any) {
 	errorCode := http.StatusInternalServerError
 	errorMessage := err.Error()
+	if errorMessage == "Invalid credentials" {
+		errorCode = http.StatusUnauthorized
+	}
 	if errorMessage == "User not found" {
 		errorCode = http.StatusNotFound
 	}
@@ -69,4 +73,20 @@ func DeleteUserByID(id int) (int, map[string]any) {
 		return getUserError(err)
 	}
 	return http.StatusNoContent, nil
+}
+
+func Login(loginData database.User) (int, map[string]any) {
+	record, err := database.GetUserByUsername(loginData.Username)
+	if err != nil {
+		return getUserError(err)
+	}
+	if !VerifyPassword(loginData.Password, record.Password) {
+		return getUserError(errors.New("Invalid credentials"))
+	}
+
+	token, err := CreateToken(loginData.Username)
+	if err != nil {
+		return getUserError(err)
+	}
+	return http.StatusOK, map[string]any{"token": token}
 }

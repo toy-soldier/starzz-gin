@@ -16,6 +16,10 @@ func HandleListGalaxies(c *gin.Context) {
 }
 
 func HandleRegisterGalaxy(c *gin.Context) {
+	if !hasValidJWT(c) {
+		return
+	}
+
 	var newData database.Galaxy
 
 	if err := c.BindJSON(&newData); err != nil {
@@ -45,6 +49,10 @@ func HandleGetGalaxyByID(c *gin.Context) {
 }
 
 func HandleUpdateGalaxyByID(c *gin.Context) {
+	if !hasValidJWT(c) {
+		return
+	}
+
 	var newData database.Galaxy
 
 	if err := c.BindJSON(&newData); err != nil {
@@ -62,6 +70,10 @@ func HandleUpdateGalaxyByID(c *gin.Context) {
 }
 
 func HandleDeleteGalaxyByID(c *gin.Context) {
+	if !hasValidJWT(c) {
+		return
+	}
+
 	statusCode, message := parseGalaxyID(c.Param("id"))
 	if message == nil {
 		statusCode, message = controllers.DeleteGalaxyByID(statusCode)

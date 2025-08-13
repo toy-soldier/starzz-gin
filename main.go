@@ -52,5 +52,6 @@ func main() {
 		users.DELETE("/:id", routers.HandleDeleteUserByID)
 	}
 
+	router.POST("/login", routers.HandleLogin)
 	router.Run("localhost:8080")
 }

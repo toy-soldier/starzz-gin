@@ -64,7 +64,7 @@ All code committed at each chapter is available with the commit message of the c
 
 Go libraries added:
 
-    gin
+    github.com/gin-gonic/gin
 
 We set up the project structure as follows:
 
@@ -169,7 +169,7 @@ The other modules in the `routers` package follow a similar logic.
 
 Go libraries added:
 
-    sqlite
+    modernc.org/sqlite
 
 We add the `models` package to our project:
 
@@ -343,7 +343,7 @@ The other modules in the `database` and `controllers` packages are similarly wri
 
 Go libraries added:
 
-    bcrypt
+    golang.org/x/crypto/bcrypt
     
 For security, we need to save the hash of the users' passwords, not the actual passwords.  We
 use the `bcrypt` library for this.  We add a new module `hashing.go` to the `controllers` package:
@@ -380,6 +380,145 @@ before forwarding the data.  For example:
             return getUserError(err)
         }
     ...
+
+#### Chapter 4: Setting up authorization using JWT
+
+Go libraries added:
+
+    github.com/golang-jwt/jwt/v5
+
+We use JWT (JSON Web Token) to protect our sensitive endpoints.  Every time we receive a request
+for one of these endpoints, we inspect the request's headers to see whether it contains a JWT.  
+If it does, we authorize (i.e. allow) the request to access the endpoint; otherwise we block the
+request and raise an error.
+
+The JWT encodes information about the requestor.  Therefore, to generate the JWT we need to know
+the identity of a user.  We require a user to log in to the application.  Upon successful authentication
+(i.e. we know who the user is), we generate a JWT containing his identity.  The user then includes
+the JWT in subsequent requests.
+
+We begin by modifying `main.go` to include a route for logging in:
+
+    ...
+    router.POST("/login", routers.HandleLogin)
+    ...
+
+In `users.go` of `routers` package, we add a handler for login requests:
+
+    ...
+    func HandleLogin(c *gin.Context) {
+        var loginData database.User
+
+        if err := c.BindJSON(&loginData); err != nil {
+            // if the conversion fails, this will automatically return HTTP 400
+            // so there is no need to explicitly handle it
+            return
+        }
+
+        statusCode, message := controllers.Login(loginData)
+        c.JSON(statusCode, message)
+    }
+
+The request is then processed in `users.go` of the `controllers` package:
+
+    ...
+    func Login(loginData database.User) (int, map[string]any) {
+        record, err := database.GetUserByUsername(loginData.Username)
+        if err != nil {
+            return getUserError(err)
+        }
+        if !VerifyPassword(loginData.Password, record.Password) {
+            return getUserError(errors.New("Invalid credentials"))
+        }
+
+        token, err := CreateToken(loginData.Username)
+        if err != nil {
+            return getUserError(err)
+        }
+        return http.StatusOK, map[string]any{"token": token}
+    }
+    ...
+
+We try to authenticate the user.  We first retrieve the user with the given username.  To do this,
+in `users.go` of the `database` package, we add a function to search users by username:
+
+    ...
+    func GetUserByUsername(username string) (*User, error) {
+        rows, err := DB.Query("SELECT username, password FROM users WHERE username=?", username)
+        if err != nil {
+            return nil, err
+        }
+        defer rows.Close()
+
+        record := User{}
+        if rows.Next() {
+            err = rows.Scan(&record.Username, &record.Password)
+            if err != nil {
+                return nil, err
+            }
+            return &record, nil
+        }
+
+        return nil, errors.New("Invalid credentials")
+    }
+    ...
+
+After we get the correct user, we then validate whether the password is correct.  To do this, we
+call the `VerifyPassword()` function in the `hashing.go` module (also in the `controllers` package)
+to check whether the given password matches the user's hashed password saved in the database.  If
+so, we generate a JWT, encoding the user's username.  To do this, in `token.go` of the `controllers`
+package, we add this function:
+
+    ...
+    func CreateToken(username string) (string, error) {
+        token := jwt.NewWithClaims(jwt.SigningMethodHS256,
+            jwt.MapClaims{
+                "username": username,
+                "exp":      time.Now().Add(time.Minute * 15).Unix(),
+            })
+        tokenString, err := token.SignedString(secretKey)
+        if err != nil {
+            return "", err
+        }
+        return tokenString, nil
+    }
+    ...
+
+The user then includes the token in the header of the user's subsequent requests.
+
+<img src="assets/postman.jpg" width="500" height="200"/>
+
+Now that we are able to provide JWTs to users, we can implement protection of our endpoints.
+We add this function to `users.go` of the `routers` package:
+
+    ...
+    func hasValidJWT(c *gin.Context) bool {
+        auth := c.GetHeader("Authorization")
+        if auth == "" {
+            c.JSON(http.StatusUnauthorized, map[string]any{"message": "Missing authorization header"})
+            return false
+        }
+        err := controllers.VerifyToken(auth[len("Bearer "):])
+        if err != nil {
+            c.JSON(http.StatusForbidden, map[string]any{"message": err.Error()})
+            return false
+        }
+        return true
+    }
+    ...
+
+To protect sensitive endpoints, we simply add a call to the `hasValidJWT()` function.  As an example,
+here's a snippet from the function `HandleRegisterConstellation()` in `constellations.go` of the `routers` package:
+
+    ...
+    func HandleRegisterConstellation(c *gin.Context) {
+        if !hasValidJWT(c) {
+            return
+        }
+
+    ...
+
+Similar changes were done in the rest of the modules of the `routers` package.
 
 ### References
 

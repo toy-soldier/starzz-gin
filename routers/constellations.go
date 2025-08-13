@@ -16,6 +16,10 @@ func HandleListConstellations(c *gin.Context) {
 }
 
 func HandleRegisterConstellation(c *gin.Context) {
+	if !hasValidJWT(c) {
+		return
+	}
+
 	var newData database.Constellation
 
 	if err := c.BindJSON(&newData); err != nil {
@@ -45,6 +49,10 @@ func HandleGetConstellationByID(c *gin.Context) {
 }
 
 func HandleUpdateConstellationByID(c *gin.Context) {
+	if !hasValidJWT(c) {
+		return
+	}
+
 	var newData database.Constellation
 
 	if err := c.BindJSON(&newData); err != nil {
@@ -62,6 +70,10 @@ func HandleUpdateConstellationByID(c *gin.Context) {
 }
 
 func HandleDeleteConstellationByID(c *gin.Context) {
+	if !hasValidJWT(c) {
+		return
+	}
+
 	statusCode, message := parseConstellationID(c.Param("id"))
 	if message == nil {
 		statusCode, message = controllers.DeleteConstellationByID(statusCode)
